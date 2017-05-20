@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="d793d37f-9faf-40ff-916b-f7881eeeeb4d" name="p83.mobisoftline.com.ua" url="http://p83.mobisoftline.com.ua">
+        <fileTransfer host="p83.mobisoftline.com.ua" port="22" rootFolder="/html" accessType="SFTP" password="dfeedfeedfc7dfe5dfe5dfcddfc0dfc7dffbdfc9dfc4dfe1df9bdf98" username="www-data">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

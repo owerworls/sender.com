@@ -1,0 +1,7 @@
+CKEDITOR.instances['editor1'].getData();
+document.getElementsByTagName("iframe")[0].contentDocument.getElementsByTagName("body")[0].innerHTML
+
+CKEDITOR.instances.textEmail.updateElement();
+
+http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-getData
+http://docs.ckeditor.com/#!/guide/dev_savedata

@@ -1,0 +1,6 @@
+user=2
+alfanames=[WatsonsClub]
+user_type=0
+chat_key=452c0e93e034951a-e55235953d920284-13ef8f3a9edb2067
+balance=0
+voice=0
