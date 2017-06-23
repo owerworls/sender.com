@@ -16,19 +16,40 @@ switch ($input['event']):
         }
         else
             $img='';
+
+
         $sql="  insert into viberchat
-                set `event`=    '{$input['event']}',
-                `message_token`='{$input['message_token']}', 
-                `sender_id`=    '{$input['sender']['id']}',
-                `sender_name`=  '".mb_convert_encoding($input['sender']['name'],'UTF-8')."',
-                `sender_avatar`='{$input['sender']['avatar']}',
-                `message_text`= '$img".iconv('UTF-8','UTF-8',$input['message']['text'])."',
-                `message_type`= '{$input['message']['type']}',
-                `api_key`='452c0e93e034951a-e55235953d920284-13ef8f3a9edb2067'";
+                set `event`     = '{$input['event']}',
+                `message_token` = '{$input['message_token']}', 
+                `sender_id`     = '".$input['sender']['id']."',  
+                `message_text`  = '$img".iconv('UTF-8','UTF-8',$input['message']['text'])."',
+                `message_type`  = '{$input['message']['type']}',
+                `api_key`  = '452c0e93e034951a-e55235953d920284-13ef8f3a9edb2067'
+                
+                ";
+
         mysqli_query($link, $sql);
-        $fp = fopen('27ua.log', "a"); // Открываем файл в режиме записи
-        fwrite($fp,$sql); // Запись в файл
-        fclose($fp); //Закрытие файла
+//        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/$ssq.txt',$sql);
+        $sql="";
+
+        $userExist=mysqli_query($link, "select sender_id from viberuser where sender_id='".$input['sender']['id']."'");
+        if($userExist){
+            mysqli_query($link,"
+                    update viberuser set message_date=now(), new_message=new_message+1 where sender_id='".$input['sender']['id']."'
+                    ");
+        }
+        else
+        {
+            mysqli_query($link,"
+                    insert into viberuser set 
+                        sender_id='".$input['sender']['id']."',  
+                        sender_name='".mb_convert_encoding($input['sender']['name'],'UTF-8')."', 
+                        sender_avatar='".$input['sender']['avatar']."',
+                        new_message=new_message+1
+                    ");
+        }
+
+
         break;
 endswitch;
 

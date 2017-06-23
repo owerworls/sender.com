@@ -48,8 +48,17 @@ switch ($target):
     case 'ajaxGeneralSMSReport':
         include $_SERVER['DOCUMENT_ROOT'].'/view/ajaxGeneralSMSReport.php';
         break;
+    case 'ajaxGeneralSMSReportSmall':
+        include $_SERVER['DOCUMENT_ROOT'].'/view/ajaxGeneralSMSReportSmall.php';
+        break;
+    case 'ajaxGeneralEmailReportSmall':
+        include $_SERVER['DOCUMENT_ROOT'].'/view/ajaxGeneralSMSReportSmall.php';
+        break;
     case 'ajaxDetailVoiceReport':
         include $_SERVER['DOCUMENT_ROOT'].'/view/ajaxDetailVoiceReport.php';
+        break;
+    case 'ajaxLastDispatchSMS':
+        include $_SERVER['DOCUMENT_ROOT'].'/view/ajaxLastDispatchSMS.php';
         break;
 
 endswitch;

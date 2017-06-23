@@ -9,14 +9,16 @@
 class Chat
 {
     private $link;
-    
+
     function __construct($link)
     {
-        $this->link=$link;
+        $this->link = $link;
     }
-    
-    function sendMessage(){
-        if($_POST['text']=='') return;
+
+    function sendMessage()
+    {
+        file_put_contents('ddeeeeddd',$_POST['text']);
+        if ($_POST['text'] == '') return;
         $ch1 = curl_init('https://chatapi.viber.com/pa/send_message');
         curl_setopt($ch1, CURLOPT_HEADER, 0);//выводить заголовки
         curl_setopt($ch1, CURLOPT_RETURNTRANSFER, 1);// 1 - вывод в переменную
@@ -41,36 +43,68 @@ class Chat
                     `api_key`='{$_COOKIE['chat_key']}'
                     ");
     }
-     function updateChat(){
-         $q = mysqli_query($this->link, "select *, DATE_FORMAT(`timestamp`,'%k:%i ') AS time from viberchat 
+
+    //для добавления непрочитаных сообщений в текущий диалог
+    function updateChat()
+    {
+        $q = mysqli_query($this->link, "select *, DATE_FORMAT(`timestamp`,'%k:%i ') AS time from viberchat 
                                   where `api_key`='{$_COOKIE['chat_key']}' 
                                   AND sender_id='" . $_POST['sender_id'] . "' 
                                   and my_seen=0");
-         mysqli_query($this->link, "update viberchat set my_seen=1 where `api_key`='{$_COOKIE['chat_key']}' AND sender_id='" . $_POST['sender_id'] . "' and my_seen=0");
+        mysqli_query($this->link, "update viberchat set my_seen=1 where `api_key`='{$_COOKIE['chat_key']}' AND sender_id='" . $_POST['sender_id'] . "' and my_seen=0");
+        mysqli_query($this->link, "
+                                            update viberuser
+                                            set new_message=0
+                                            where 
+                                            `api_key`='{$_COOKIE['chat_key']}' AND 
+                                            `sender_id`='".$_POST['sender_id']."'
 
-         while ($r = mysqli_fetch_array($q)) {
-             $message_text=showEmoji($r['message_text']);
-             if ($r['event'] == 'sendMessage')
-                 echo "<div class='sendMessage'>" . $message_text . "<span>" . $r['time'] . "</span></div>";
-             else
-                 echo "<div class='message'>" . $message_text . "<span>" . $r['time'] . "</span></div>";
-         }
-     }
-    
-    function updateCorrespondents(){
+                                        ");
+        while ($r = mysqli_fetch_array($q)) {
+            $message_text = showEmoji($r['message_text']);
+            if ($r['event'] == 'sendMessage')
+                echo "<div class='sendMessage'>" . $message_text . "<span>" . $r['time'] . "</span></div>";
+            else
+                echo "<div class='message'>" . $message_text . "<span>" . $r['time'] . "</span></div>";
+        }
+    }
+
+    function countCorrespondents(){
         $q = mysqli_query($this->link, "
-                    select * from viberchat 
+                    select * from viberuser
                     where `api_key`='{$_COOKIE['chat_key']}' 
-                    AND id in (SELECT max(id) FROM `viberchat` WHERE event='message' GROUP by  sender_id)  
                     GROUP BY sender_id 
-                    ORDER BY `timestamp` DESC");
-        while ($r = mysqli_fetch_array($q)):
-            $count_unseen = mysqli_fetch_array(mysqli_query($this->link, "select count(id) from viberchat where my_seen=0 and sender_id='{$r['sender_id']}'"));
-            $count = $count_unseen[0] > 0 ? $count_unseen[0] : "";
-            if ($r['sender_avatar']=="")
-                $sender_avatar='/img/man.png';
-            else{
-                $sender_avatar=$r['sender_avatar'];
+                   ");
+
+        return mysqli_num_rows($q);
+    }
+
+    function updateCorrespondents()
+    {
+        //                    AND id in (SELECT max(id) FROM `viberchat` WHERE event='message' GROUP by  sender_id)
+
+        $sql="
+                    select * from viberuser
+                    where `api_key`='{$_COOKIE['chat_key']}'
+                
+                    ORDER BY `message_date` DESC
+                    ";
+
+//        mysqli_query($this->link,"TRUNCATE TABLE `viberuser`");
+
+        $query = mysqli_query($this->link, $sql);
+        while ($r = mysqli_fetch_array($query)):
+//            $temp_q=mysqli_query($this->link,"select sender_id from viberuser wehre sender_id='".$r['sender_id']."'");
+//            if(!$temp_q){
+//                mysqli_query($this->link,"insert into viberuser set sender_id='".$r['sender_id']."',  sender_name='".$r['sender_name']."', sender_avatar='".$r['sender_avatar']."', message_date='".$r['timestamp']."', api_key='".$r['api_key']."' ");
+//            }
+
+//            $count_unseen = mysqli_fetch_array(mysqli_query($this->link, "select count(id) from viberchat where my_seen=0 and sender_id='{$r['sender_id']}'"));
+            $count = $r['new_message']==0?"":$r['new_message'];
+            if ($r['sender_avatar'] == "")
+                $sender_avatar = '/img/man.png';
+            else {
+                $sender_avatar = $r['sender_avatar'];
             }
 
             echo "<a href=\"#\" class=\"list-group-item\" data-sender-id=\"{$r['sender_id']}\" 
@@ -78,8 +112,9 @@ class Chat
                   {$r['sender_name']}  <span class=\"badge\">" . $count . "</span></a>";
         endwhile;
     }
-    
-    function sendMessageWithImg(){
+
+    function sendMessageWithImg()
+    {
         $ch1 = curl_init('https://chatapi.viber.com/pa/send_message');
         curl_setopt($ch1, CURLOPT_HEADER, 0);//выводить заголовки
         curl_setopt($ch1, CURLOPT_RETURNTRANSFER, 1);// 1 - вывод в переменную
@@ -108,20 +143,38 @@ class Chat
                     ");
     }
 
-    function getChat(){
+    function getChat()
+    {
+        mysqli_query($this->link, "
+                        update viberuser set 
+                        new_message=0 
+                        where 
+                            api_key='{$_COOKIE['chat_key']}' AND 
+                            sender_id='" . $_POST['sender_id'] . "'"
+                      );
         mysqli_query($this->link, "update viberchat set my_seen=1 where `api_key`='{$_COOKIE['chat_key']}' AND sender_id='" . $_POST['sender_id'] . "' and my_seen=0");
-        $q = mysqli_query($this->link, "select *, DATE_FORMAT(`timestamp`,'%k:%i ') AS time, DATE_FORMAT(`timestamp`,'%d.%m.%Y') AS `date` from viberchat where `api_key`='{$_COOKIE['chat_key']}' AND sender_id='" . $_POST['sender_id'] . "'");
-        $date='';
+
+        $q = mysqli_query($this->link, "
+                        select 
+                            *, 
+                            DATE_FORMAT(`timestamp`,'%k:%i ') AS time, 
+                            DATE_FORMAT(`timestamp`,'%d.%m.%Y') AS `date` 
+                        from viberchat 
+                        where 
+                          api_key='{$_COOKIE['chat_key']}' AND 
+                          sender_id='" . $_POST['sender_id'] . "'"
+        );
+
+        $date = '';
         while ($r = mysqli_fetch_array($q)) {
-            if($r['date']!=$date){
-                $date=$r['date'];
-                $datePrint="<div class='date'>$date</div>";
-            }
-            else{
-                $datePrint='';
+            if ($r['date'] != $date) {
+                $date = $r['date'];
+                $datePrint = "<div class='date'>$date</div>";
+            } else {
+                $datePrint = '';
             }
             echo $datePrint;
-            $message_text=showEmoji($r['message_text']);
+            $message_text = showEmoji($r['message_text']);
             if ($r['event'] == 'sendMessage')
                 echo "<div class='sendMessage'>" . $message_text . "<span title='{$r['date']}'>" . $r['time'] . "</span></div>";
             else

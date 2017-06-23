@@ -68,7 +68,6 @@ switch ($target) {
         break;
     case 'updateChat':
         $chat->updateChat();
-        
         break;
     case 'updateCorrespondents':
         $chat->updateCorrespondents();

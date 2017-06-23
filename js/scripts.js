@@ -214,12 +214,11 @@ var newMessages = 0;
 function updateNewChats() {
     $.post('/viber/handler.php', {target: 'updateNewChats'}, function (data) {
         newMessages = data;
-        $('#newMessage.badge.top').html(data);
+        // $('#newMessage.badge.top').html(data);
         if (newMessages > 0) {
             if (!blink_run) {
                 blink_id = setInterval(blink, 500);
                 blink_run = true;
-                console.log('blink_run');
             }
         }
         else {
@@ -227,7 +226,6 @@ function updateNewChats() {
                 clearInterval(blink_id);
                 blink_run = false;
                 $('title').html('Softline - mobile system');
-                console.log('blink_run=false');
             }
         }
     });
@@ -243,7 +241,7 @@ function blink() {
 
 function updateCorrespondents() {
     $.post('/viber/handler.php', {target: 'updateCorrespondents'}, function (data) {
-        $('.list-group').html(data);
+        $('.list-group.chat').html(data);
         $("[data-sender-id=\"" + active_user + "\"]").addClass('active');
         updateNewChats()
     });
@@ -253,7 +251,11 @@ function sendMessage(message) {
     if ((active_user != '') && (!($('#btnChatSend').attr('disabled') == 'disabled'))) {
         $('#btnChatSend').attr('disabled', 'disabled');
         $('#inputChatSend').attr('disabled', 'disabled');
-        $.post('/viber/handler.php', {receiver_id: active_user, target: 'sendMessage', text: message}, function () {
+        $.post('/viber/handler.php',
+            {receiver_id: active_user,
+                target: 'sendMessage',
+                text: message},
+            function () {
             updateChat();
             $('#btnChatSend').removeAttr('disabled');
             $('#inputChatSend').removeAttr('disabled');
@@ -283,20 +285,40 @@ function openGetInvoice() {
     $('#dialogInvoice').dialog('open');
 }
 
+function openGetInvoiceDashboard() {
+    $('#invoiceSum').val('');
+    $('#btnForm_bal').toggle();
+    $('#btnForm_tbl').toggle();
+
+}
+function openGetInvoiceMenu() {
+    $('#invoiceSumMenu').val('');
+    $('#mnuForm_bal').toggle();
+    $('#mnuForm_tbl').toggle();
+}
+
+function getInvoiceFromMenu() {
+    $.ajaxSetup({
+        async: false
+    });
+    $.get('/handler.php', {target: 'getInvoice', invoiceSum: $('#invoiceSumMenu').val()}, function (data) {
+        $('#getInvoiceFormMenu').attr('action', '/sharing/bills/' + data);
+    });
+    return false;
+}
+
 function getInvoice() {
     $.ajaxSetup({
         async: false
     });
     $.get('/handler.php', {target: 'getInvoice', invoiceSum: $('#invoiceSum').val()}, function (data) {
         $('#getInvoiceForm').attr('action', '/sharing/bills/' + data);
-        // $('#invoiceOk').attr('href','/sharing/bills/'+data);
     });
-    $('#dialogInvoice').dialog('close');
     return false;
 }
 
 updateCorrespondents();
-timer_updateChat = setInterval(updateChat, 5000);
+timer_updateChat = setInterval(updateChat, 10000);
 
 function getDetailSMSReportByDate() {
 
@@ -325,6 +347,22 @@ function getDetailSMSReportByDate() {
         })
     }
     return false;
+}
+
+function ajaxLastDispatchSMS(){
+    $.ajax({
+        type:'get',
+        url:'',
+        data: {
+            target: 'ajaxLastDispatchSMS',
+            id: id
+        },
+        success: function (data) {
+        },
+        complete: function () {
+
+        }
+    })
 }
 
 function getDetailSMSReportByDispatch(id, eventElem) {
@@ -364,18 +402,18 @@ function getDetailReportSMSFileName(id) {
 }
 
 
-function ajaxDetailSMSReport(setPage,requestSource) {
-    if(setPage!==undefined){
-        page=setPage;
+function ajaxDetailSMSReport(setPage, requestSource) {
+    if (setPage !== undefined) {
+        page = setPage;
     }
-    if(requestSource===undefined){
-        requestSource=false;
+    if (requestSource === undefined) {
+        requestSource = false;
     }
-    if(requestSource) $('.preloader').fadeIn();
+    if (requestSource) $('.preloader').fadeIn();
     $.ajax({
         url: '/handler.php',
         type: 'GET',
-        data:{
+        data: {
             target: 'ajaxDetailSMSReport',
             dateFrom: $('.dateFrom').val(),
             dateTo: $('.dateTo').val(),
@@ -396,7 +434,7 @@ function ajaxGeneralSMSReport() {
     $.ajax({
         url: '/handler.php',
         type: 'GET',
-        data:{
+        data: {
             target: 'ajaxGeneralSMSReport',
             dateFrom: $('.dateFrom').val(),
             dateTo: $('.dateTo').val()
@@ -409,19 +447,56 @@ function ajaxGeneralSMSReport() {
     return false;
 }
 
-
-function ajaxDetailVoiceReport(setPage,requestSource) {
-    if(setPage!==undefined){
-        page=setPage;
-    }
-    if(requestSource===undefined){
-        requestSource=false;
-    }
-    if(requestSource) $('.preloader').fadeIn();
+function ajaxGeneralSMSReportSmall() {
+    $('.preloader').fadeIn();
+    $('.ajaxHere').html('');
     $.ajax({
         url: '/handler.php',
         type: 'GET',
-        data:{
+        data: {
+            target: 'ajaxGeneralSMSReportSmall',
+            dateFrom: $('.dateFrom').val(),
+            dateTo: $('.dateTo').val()
+        },
+        success: function (data) {
+            $('.ajaxGeneralSMSReportSmall').html(data);
+        }
+    });
+    return false;
+}
+
+
+function ajaxGeneralEmailReportSmall() {
+    $('.preloader').fadeIn();
+    $('.ajaxHere').html('');
+    $.ajax({
+        url: '/handler.php',
+        type: 'GET',
+        data: {
+            target: 'ajaxGeneralEmailReportSmall',
+            dateFrom: $('.dateFrom').val(),
+            dateTo: $('.dateTo').val()
+        },
+        success: function (data) {
+            $('.ajaxGeneralEmailReportSmall').html(data);
+        }
+    });
+    return false;
+}
+
+
+function ajaxDetailVoiceReport(setPage, requestSource) {
+    if (setPage !== undefined) {
+        page = setPage;
+    }
+    if (requestSource === undefined) {
+        requestSource = false;
+    }
+    if (requestSource) $('.preloader').fadeIn();
+    $.ajax({
+        url: '/handler.php',
+        type: 'GET',
+        data: {
             target: 'ajaxDetailVoiceReport',
             dateFrom: $('.dateFrom').val(),
             dateTo: $('.dateTo').val(),
@@ -438,7 +513,7 @@ function ajaxDetailVoiceReport(setPage,requestSource) {
     return false;
 }
 
-function getDetailVoiceReportByDate(){
-    location.href = '/handler.php?target=getDetailVoiceReportByDate&dateFrom='+$('.dateFrom').val()+'&dateTo='+$('.dateTo').val();
+function getDetailVoiceReportByDate() {
+    location.href = '/handler.php?target=getDetailVoiceReportByDate&dateFrom=' + $('.dateFrom').val() + '&dateTo=' + $('.dateTo').val();
     return false;
 }

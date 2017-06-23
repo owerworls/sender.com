@@ -1,4 +1,4 @@
-<?
+<?/*
 $ch1 = curl_init('https://chatapi.viber.com/pa/set_webhook');
 curl_setopt ($ch1, CURLOPT_HEADER, 0);//выводить заголовки
 curl_setopt ($ch1, CURLOPT_RETURNTRANSFER, 1);// 1 - вывод в переменную
@@ -11,7 +11,7 @@ curl_setopt($ch1, CURLOPT_POSTFIELDS, '{
 }');
 $html = curl_exec($ch1);
 
-curl_close($ch1);
+curl_close($ch1);*/
 ?>
 <p><?=$html?></p>
 <?

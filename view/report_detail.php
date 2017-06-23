@@ -101,6 +101,16 @@ include 'head.php'
 
     ajaxDetailSMSReport(1, true);
 
+    <?
+            if(isset($_GET['openId'])){
+               ?>
+
+                getDetailReportSMSFileName(<?=$_GET['openId']?>);
+                getDetailReportSMS(<?=$_GET['openId']?>);
+
+                <?
+            }
+?>
 </script>
 
 <?php

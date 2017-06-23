@@ -8,7 +8,7 @@
     ?>
     <div class="row">
         <div class="col-lg-3 col-lg-offset-1">
-            <div class="list-group scrolled">
+            <div class="list-group chat scrolled">
                 
             </div>
         </div>
@@ -48,9 +48,9 @@
                                 <i class="fa fa-smile-o" aria-hidden="true"></i>
                             </button>
                         </span> <input type="text" id="inputChatSend" class="form-control" style="background: #e7e7e7"
-                                       onkeypress="if (!event.shiftKey && event.keyCode==13) sendMessage($('input').val())">
+                                       onkeypress="if (!event.shiftKey && event.keyCode==13) sendMessage($('input#inputChatSend').val())">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" id="btnChatSend" onclick="sendMessage($('input').val())">Send</button>
+                            <button class="btn btn-default" type="button" id="btnChatSend" onclick="sendMessage($('input#inputChatSend').val())">Send</button>
                             <!--button class="btn btn-default" type="button" onclick="sendMessageWithImg()">Img</button-->
                         </span>
                     </div><!-- /input-group -->

@@ -1,5 +1,4 @@
 <?php
-
 header("Content-Type: text/html; charset=utf-8");
 include $_SERVER['DOCUMENT_ROOT'].'/classes/Engine.php';
 include_once 'config.php';
@@ -11,7 +10,7 @@ if (isset($_GET['target']))
 elseif (isset($_POST['target']))
     $target = $_POST['target'];
 else
-    $target = ($_COOKIE['user_type']==0)?'message':'chat';
+    $target = ($_COOKIE['user_type']==0)?'dashboard':'chat';
 
 switch ($target):
     case 'alphanames':
@@ -29,6 +28,12 @@ switch ($target):
     case 'message':
         if ($site->isauth())
             include 'view/mail2.php';
+        else
+            include 'view/login.php';
+        break;
+    case 'dashboard':
+        if ($site->isauth())
+            include 'view/dashboard.php';
         else
             include 'view/login.php';
         break;

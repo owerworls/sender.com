@@ -19,7 +19,7 @@
                 <div class="col-md-3">
                     Дата по
                     <input id="datetimepicker2" name="finish_notification"
-                           value="<?= isset($_GET['finish_notification']) ? $_GET['finish_notification'] : date('d.m.Y', time() - 60 * 60) ?>"
+                           value="<?= isset($_GET['finish_notification']) ? $_GET['finish_notification'] : date('d.m.Y', time() ) ?>"
                            class="form-control dateTo" required placeholder="Клик для выбора">
                 </div>
                 <div class="col-md-3"><br>

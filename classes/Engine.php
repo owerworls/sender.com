@@ -42,6 +42,7 @@ class Engine
             $alfanamesA = explode('=', $data[1]);
             $alfanames = str_replace('[', '', $alfanamesA[1]);
             $alfanames = str_replace(']', '', $alfanames);
+            $alfanames = trim($alfanames);
             setcookie('alfanames', $alfanames, time() + 60 * 60 * 8, '/');
             $user_type = explode('=', $data[2]);
             setcookie('user_type', trim($user_type[1]), time() + 60 * 60 * 8, '/');
@@ -49,6 +50,20 @@ class Engine
             setcookie('chat_key', trim($api_key[1]), time() + 60 * 60 * 8, '/');
             $voice = explode('=', $data[5]);
             setcookie('voice', trim($voice[1]), time() + 60 * 60 * 8, '/');
+        }
+    }
+
+    function getUserLogo(){
+        $sql="select file_name from account_detail where account_id='{$_COOKIE['id']}'";
+        $q=mysqli_query($this->link,$sql);
+        $r=mysqli_fetch_array($q);
+        $fileNamePath=$r[0];
+        $fileNameURL=str_replace('/var/www/html','',$r[0]);
+        if(file_exists($fileNamePath)){
+            return $fileNameURL;
+        }
+        else {
+            return '/img/man.png';
         }
     }
 
@@ -215,7 +230,7 @@ class Engine
 
     function sendSMS($post)
     {
-        sleep(1);
+        sleep(2);
         $file = $post['file'];
         $user = $post['user'];
         $phone = urlencode($post['phone']);
@@ -230,11 +245,14 @@ class Engine
             substr($post['start_date'], 6, 4)));
         $alfaname = urlencode($post['alfaname']);
 
+        file_put_contents('mess_text.txt',$post['mess_text']);
         $mess = str_replace("&nbsp;", "", $post['mess_text']);
         $mess = str_replace(chr(13), "", $mess);
         $mess = str_replace(chr(10), "", $mess);
+        $mess = str_replace('<p>', '', $mess);
         $mess = str_replace('</p>', '\n', $mess);
         $mess = str_replace('&ndash;', '-', $mess);
+        file_put_contents('mess_text2.txt',$mess);
 
 
         //======================= обработка изображений ======================//
@@ -287,6 +305,7 @@ class Engine
 
 
         $mess_text = urlencode(trim(strip_tags($mess)));
+        file_put_contents('mess_text3.txt',$mess_text);
 
         $url = "http://172.20.128.3:8080/messenger/send?file=$file&user=$user&phone=$phone&sms_text=$sms_text&mess_text=$mess_text&type=$type&start_time=$start_date&alfaname=$alfaname";
         $data = file($url);
@@ -472,13 +491,13 @@ class Engine
         return $data;
     }
 
-    function getBalance()
+    function getBalance($prefix='',$suffix='')
     {
         $sql = "select balance, payment_type from accounts where id={$_COOKIE['id']}";
         $q = mysqli_query($this->link, $sql);
         $r = mysqli_fetch_array($q);
         if ($r['payment_type'] != 0)
-            return "Баланс: " . number_format($r[0] / 1000, 2, ',', ' ') . " грн ";
+            return $prefix . number_format($r[0] / 1000, 2, ',', ' ') . $suffix;
         else
             return "";
 

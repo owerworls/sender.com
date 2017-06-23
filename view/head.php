@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/font-awesome.css">
+    <link rel="stylesheet" href="/css/title-box.css">
     <link rel="stylesheet" type="text/css" href="/css/jquery.datetimepicker.css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&amp;subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700|Roboto:400,500,700,900&amp;subset=cyrillic" rel="stylesheet">
     <script src="/js/jquery-1.12.4.min.js"></script>
     <script src="/js/scripts.js"></script>
     <script src="/js/bootstrap.js"></script>

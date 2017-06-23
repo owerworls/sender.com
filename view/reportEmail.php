@@ -1,13 +1,4 @@
-<?php /*
-$fp = fopen('counter.txt', 'rt');
-if ($fp) {
-    while (!feof($fp)) {
-        $mytext = fgets($fp, 999);
-        echo $mytext . "<br />";
-    }
-} else echo "Ошибка при открытии файла";
-fclose($fp);
-echo ($_GET['user']."-".$_COOKIE['id'])."-";*/
+<?php
 if((isset($_GET['finish_notification']))and($_GET['user']==$_COOKIE['id'])){
     $start_notification=date('dmYHis',mktime(0,0,0,substr($_GET['start_notification'],3,2),substr($_GET['start_notification'],0,2),substr($_GET['start_notification'],6,4)));
     $finish_notification=date('dmYHis',mktime(23,59,59,substr($_GET['finish_notification'],3,2),substr($_GET['finish_notification'],0,2),substr($_GET['finish_notification'],6,4)));

@@ -23,11 +23,8 @@ foreach ($data as $line_num => $line) {
         $sent_sum = $sent_sum + (int)trim($tmp[3]);
         $postponed .= trim($tmp[4]) . ", ";
         $postponed_sum = $postponed_sum + (int)trim($tmp[4]);
-        $table .= "<tr><td>" . $tmp[0] . "</td><td>" . $tmp[1] . "</td><td>" . $tmp[2] . "</td><td>" . $tmp[3] . "</td><td>" . $tmp[4] . "</td></tr>";
-    } else
-        $table .= "<tr class='active'><th>" . $tmp[0] . "</th><th>" . $tmp[1] . "</th><th>" . $tmp[2] . "</th><th>" . $tmp[3] . "</th><th>" . $tmp[4] . "</th></tr>";
+    };
 }
-$table .= "<tr class='active' style='font-weight: bold'><td>Всего</td><td>$delivered_sum</td><td>$rejected_sum</td><td>$sent_sum</td><td>$postponed_sum</td></tr>";
 
 ?>
 
@@ -35,18 +32,24 @@ $table .= "<tr class='active' style='font-weight: bold'><td>Всего</td><td>$
     $(function () {
         $('#container').highcharts({
             chart: {
-                type: 'column'
+                type: 'column',
+                width: 400,
+                height: 200
             },
             title: {
                 text: ''
             },
-            xAxis: {
-                categories: [<?php echo $date;?>]
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
             },
             yAxis: {
+                enabled: false,
                 min: 0,
                 title: {
-                    text: 'Количество сообщений'
+                    text: ''
                 },
                 stackLabels: {
                     enabled: false,
@@ -56,7 +59,6 @@ $table .= "<tr class='active' style='font-weight: bold'><td>Всего</td><td>$
                     }
                 }
             },
-
             tooltip: {
                 headerFormat: '<b>{point.x}</b><br/>',
                 pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
@@ -75,32 +77,18 @@ $table .= "<tr class='active' style='font-weight: bold'><td>Всего</td><td>$
             },
             series: [{
                 name: 'Доставлено',
-                data: [<?php echo $delivered; ?>]
+                data: [<?= $delivered; ?>]
             }, {
                 name: 'Не доставлено',
-                data: [<?php echo $rejected; ?>]
+                data: [<?= $rejected; ?>]
             }, {
                 name: 'Отправлено',
-                data: [<?php echo $sent; ?>]
+                data: [<?= $sent; ?>]
             }, {
                 name: 'Просрочено',
-                data: [<?php echo $postponed; ?>]
+                data: [<?= $postponed; ?>]
             }]
         });
     });</script>
-
-<div class="panel panel-default">
-    <div class="panel-body">
-        <h3>График отсылки</h3>
-        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-body">
-        <h3>Таблица отсылки</h3>
-        <table class="table table-condensed table-hover">
-            <?php echo $table; ?>
-        </table>
-    </div>
-</div>
+    <div style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 

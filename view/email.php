@@ -22,14 +22,6 @@
         $fileFields = explode(';', $fileList[0]);
     }
     ?>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <ul class="nav nav-pills">
-                <li role="presentation"><a href="?target=message"><i class="fa fa-commenting-o" aria-hidden="true"></i> SMS&Viber</a></li>
-                <li role="presentation" class="active"><a href="?target=email"><i class="fa fa-envelope-o" aria-hidden="true"></i> Email</a></li>
-            </ul>
-        </div>
-    </div>
 
 
     <div class="panel panel-default">
